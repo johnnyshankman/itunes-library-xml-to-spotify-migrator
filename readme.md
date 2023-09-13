@@ -1,4 +1,4 @@
-# iTunes Library XML to Spotify Migrator
+# iTunes Music Library XML to Spotify Migrator
 This tool can take a standard `iTunes Music Library.xml` file and automatically migrate each song found inside that library to Spotify, if possible.
 
 iTunes library parsing is provided by [itunes-data from shawnbot](https://github.com/shawnbot/itunes-data).
