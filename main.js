@@ -31,8 +31,12 @@ if (!clientId) {
   clientId = await askQuestion("Enter Spotify Client ID:");
 }
 
+let redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
+if (!redirect_uri) {
+  redirect_uri = await askQuestion("Enter Spotify Redirect URI:");
+}
+
 var scope = 'playlist-modify-private playlist-modify-public';
-var redirect_uri = 'https://whitelights.co';
 var url = 'https://accounts.spotify.com/authorize';
   url += '?response_type=token';
   url += '&client_id=' + encodeURIComponent(clientId);
