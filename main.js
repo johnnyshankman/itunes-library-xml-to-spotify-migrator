@@ -1,10 +1,10 @@
 import fs from 'fs';
 import fetch from 'node-fetch';
 import readline from 'readline';
-import 'dotenv/config'
 import open from 'open';
 import itunes from "itunes-data";
-const parser = itunes.parser();
+import 'dotenv/config'
+
 
 function askQuestion(query) {
   const rl = readline.createInterface({
@@ -58,18 +58,15 @@ if (!playlistId) {
 let oneLibrarySemaphore = false;
 let notFoundTracks = [];
 const onLibrary = async (library) => {
-  console.log('Parsing library tracks...');
   const tracks = library['Tracks'];
 
   if (!oneLibrarySemaphore) {
     oneLibrarySemaphore = true;
-    // process each track with onTrack
     for (const trackId in tracks) {
       const track = tracks[trackId];
       await onTrack(track);
     }
   }
-
 }
 
 const onTrack = async (track) => {
@@ -80,8 +77,6 @@ const onTrack = async (track) => {
   const uriEncodedTrackName = encodeURIComponent(trackName);
   const uriEncodedTrackArtist = encodeURIComponent(trackArtist);
   const uriEncodedTrackAlbum = encodeURIComponent(trackAlbum);
-
-  console.log('Migrating ' + trackName + ' by ' + trackArtist + ' from ' + trackAlbum);
 
   let endpointString = `https://api.spotify.com/v1/search?q=${uriEncodedTrackName}%20artist:${uriEncodedTrackArtist}%20album:${uriEncodedTrackAlbum}&type=track&limit=1`;
   let searchResponse = await fetch(
@@ -97,7 +92,7 @@ const onTrack = async (track) => {
   if (searchData.tracks.items.length !== 0) {
     uriToAddToPlaylist = searchData.tracks.items[0].uri;
   } else {
-    // try without the album constraint
+    // @dev: let's try without the album constraint
     endpointString = `https://api.spotify.com/v1/search?q=${uriEncodedTrackName}%20artist:${uriEncodedTrackArtist}&type=track&limit=1`;
 
     searchResponse = await fetch(
@@ -138,16 +133,20 @@ const onTrack = async (track) => {
 
   if (addTrackData.snapshot_id) {
     console.log(`Successfully migrated ${trackName} by ${trackArtist} from ${trackAlbum} to playlist`);
+  } else {
+    console.log(`Failure migrating ${trackName} by ${trackArtist} from ${trackAlbum} to playlist`);
   }
 }
 
-// const libraryFile = fs.readFileSync(libraryXMLPath, 'utf8');
 const stream = fs.createReadStream(libraryXMLPath);
+const parser = itunes.parser();
+
 parser.on("library", onLibrary);
+
 parser.on("end", () => {
-  console.log('Finished');
+  console.log('Migration complete!');
   fs.writeFileSync('notFoundTracks.json', JSON.stringify(notFoundTracks));
-  console.log(`Could not migrate ${notFoundTracks.length} tracks`);
+  console.log(`Could not migrate ${notFoundTracks.length} tracks, that data has been written to notFoundTracks.json`);
 });
 
 // @dev: kick the whole process off
