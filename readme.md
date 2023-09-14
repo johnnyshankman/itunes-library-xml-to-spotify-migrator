@@ -20,3 +20,11 @@ After that, run `yarn start` and you're cooking.
 The CLI will prompt you for all information it needs in order to continue properly. You can prefill that information using an optional `.env` file, see [.env.example](.env.example) for what to fill out if that route interests you.
 
 Once completed, all songs will be migrated into the Playlist and you'll be left with a generated `notFoundTracks.json` file containing the track data for all songs that were not migrated.
+
+## Search Pattern
+
+First, we search for the song by constraining it to the exact album and artist found in the track data.
+
+If that produces no results, we lax the constraints and search for the exact song from the eact artist on any of their albums.
+
+After that, we fail to migrate the song as it gets messy and you may start getting false positives from the search (covers, etc).
