@@ -27,4 +27,4 @@ First, we search for the song by constraining it to the exact album and artist f
 
 If that produces no results, we lax the constraints and search for the exact song from the eact artist on any of their albums.
 
-After that, we fail to migrate the song as it gets messy and you may start getting false positives from the search (covers, etc).
+After that, we fail to migrate the song, as laxing the constraints further gets messy and produces false positives (covers, wrong song, etc).
