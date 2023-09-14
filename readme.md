@@ -6,7 +6,7 @@ This tool takes a standard `iTunes Music Library.xml` file (also called `iTunes 
 
 iTunes library parsing is provided by [itunes-data from shawnbot](https://github.com/shawnbot/itunes-data).
 
-Spotify search and playlist additions are automated using the [Spotify Web API](https://developer.spotify.com/documentation/web-api), after using [Spotify's Implicit Grant OAuth](https://developer.spotify.com/documentation/web-api/tutorials/implicit-flow) flow to log you in. The only reason for this OAuth flow is so that the tool can get permission to add songs to the playlist you provide.
+Spotify search and playlist additions are automated using the [Spotify Web API](https://developer.spotify.com/documentation/web-api), after using [Spotify's Implicit Grant OAuth](https://developer.spotify.com/documentation/web-api/tutorials/implicit-flow) flow to log you in. The only reason for this OAuth flow is so this tool has permission to add songs to any playlist you provide.
 
 ## Setup
 
