@@ -27,4 +27,4 @@ First, we search for the song by constraining it to the exact album and artist f
 
 If that produces no results, we lax the constraints and search for the exact song from the eact artist on any of their albums.
 
-After that, we fail to migrate the song, as laxing the constraints further gets messy and produces false positives (covers, wrong song, etc).
+After that, we fail to migrate the song, as laxing the constraints further gets messy and produces false positives (covers, wrong song, etc). Those songs have their track data written to `notFoundTracks.json`, allowing you to then manually go find those songs and add them to your playlist yourself.
