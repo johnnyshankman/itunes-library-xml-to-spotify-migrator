@@ -26,7 +26,7 @@ Once completed, all songs will be migrated into the Playlist and you'll be left 
 
 ## Search Pattern
 
-I use a naive two-tier search pattern.
+This uses a naive two-tier search pattern.
 
 First, search for the song by constraining it to the exact album and artist found in the track data. If there are typos obviously this will have issues.
 
