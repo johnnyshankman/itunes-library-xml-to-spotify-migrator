@@ -28,8 +28,8 @@ Once completed, all songs will be migrated into the Playlist and you'll be left 
 
 I use a naive two-tier search pattern.
 
-First, we search for the song by constraining it to the exact album and artist found in the track data. If there are typos obviously this will have issues.
+First, search for the song by constraining it to the exact album and artist found in the track data. If there are typos obviously this will have issues.
 
-Then we try a second time we search for song and constrain by only the artist name, meaning any album version will suffice.
+Then try a second time we search for song and constrain by only the artist name, meaning any album version will suffice.
 
 After that, we fail to migrate the song, as laxing the constraints further gets produces too many false positives (covers, wrong song, etc). Those songs have their track data written to `notFoundTracks.json`, allowing you to then manually go find those songs and add them to your playlist yourself.
