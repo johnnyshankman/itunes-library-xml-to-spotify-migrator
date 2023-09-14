@@ -6,8 +6,7 @@ This tool takes a standard `iTunes Music Library.xml` file (also called `iTunes 
 
 iTunes library parsing is provided by [itunes-data from shawnbot](https://github.com/shawnbot/itunes-data).
 
-Spotify search and playlist additions are automated using the [Spotify Web API](https://developer.spotify.com/documentation/web-api), after using OAuth to log you in safely with Spotify.
-
+Spotify search and playlist additions are automated using the [Spotify Web API](https://developer.spotify.com/documentation/web-api), after using [Spotify's Implicit Grant OAuth](https://developer.spotify.com/documentation/web-api/tutorials/implicit-flow) flow to log you in (necessary for having permissions to add the found songs to your playlists and that is all).
 ## Setup
 
 1. Head to the Spotify Developer Portal and create a new application. Note the Client ID of the app for usage later in the CLI or `.env`. This will provide you API access to Spotify, though in a limited capacity since it will start as a Sandbox application.
