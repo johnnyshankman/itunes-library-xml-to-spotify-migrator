@@ -26,8 +26,10 @@ Once completed, all songs will be migrated into the Playlist and you'll be left 
 
 ## Search Pattern
 
-First, we search for the song by constraining it to the exact album and artist found in the track data.
+I use a naive two-tier search pattern.
 
-If that produces no results, we lax the constraints and search for the exact song from the eact artist on any of their albums.
+First, we search for the song by constraining it to the exact album and artist found in the track data. If there are typos obviously this will have issues.
 
-After that, we fail to migrate the song, as laxing the constraints further gets messy and produces false positives (covers, wrong song, etc). Those songs have their track data written to `notFoundTracks.json`, allowing you to then manually go find those songs and add them to your playlist yourself.
+Then we try a second time we search for song and constrain by only the artist name, meaning any album version will suffice.
+
+After that, we fail to migrate the song, as laxing the constraints further gets produces too many false positives (covers, wrong song, etc). Those songs have their track data written to `notFoundTracks.json`, allowing you to then manually go find those songs and add them to your playlist yourself.
