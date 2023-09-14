@@ -5,8 +5,6 @@ iTunes library parsing is provided by [itunes-data from shawnbot](https://github
 
 Automatic Spotify search and playlist additions are done using the [Spotify Web API](https://developer.spotify.com/documentation/web-api).
 
-If the song is not migrated, its information is stored into the outputted `notFoundTracks.json` file for your re-usage later however you like.
-
 ## Setup
 
 1. Head to the Spotify Developer Portal and create a new application. Note the Client ID of the app for usage later in the CLI or `.env`. This will provide you API access to Spotify, though in a limited capacity since it will start as a Sandbox application.
@@ -18,3 +16,5 @@ If the song is not migrated, its information is stored into the outputted `notFo
 Just `yarn install` and `yarn start` and you're off.
 
 The CLI will prompt you for all information it needs in order to continue properly. You can prefill that information using an optional `.env` file, see [.env.example](.env.example) for what to fill out if that route interests you.
+
+Once completed, all songs will be migrated into the Playlist and you'll be left with a `notFoundTracks.json` file within the repo containing the track data for all songs that were not migrated.
