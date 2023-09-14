@@ -16,9 +16,9 @@ Automatic Spotify search and playlist additions are done using the [Spotify Web 
 
 ## Usage
 
-Clone the repo locally, then use `yarn install` to setup the repo.
+Clone the repo locally, then use `npm install` to setup the repo.
 
-After that, run `yarn start` and you're cooking.
+After that, run `npm run start` and you're cooking.
 
 The CLI will prompt you for all information it needs in order to continue properly. You can prefill that information using an optional `.env` file, see [.env.example](.env.example) for what to fill out if that route interests you.
 
