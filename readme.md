@@ -17,4 +17,4 @@ Just `yarn install` and `yarn start` and you're off.
 
 The CLI will prompt you for all information it needs in order to continue properly. You can prefill that information using an optional `.env` file, see [.env.example](.env.example) for what to fill out if that route interests you.
 
-Once completed, all songs will be migrated into the Playlist and you'll be left with a `notFoundTracks.json` file within the repo containing the track data for all songs that were not migrated.
+Once completed, all songs will be migrated into the Playlist and you'll be left with a generated `notFoundTracks.json` file containing the track data for all songs that were not migrated.
