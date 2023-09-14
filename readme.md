@@ -7,9 +7,9 @@ Automatic Spotify search and playlist additions are done using the [Spotify Web 
 
 ## Setup
 
-1. Head to the Spotify Developer Portal and create a new application. Note the Client ID of the app for usage later in the CLI or `.env`.
-2. Place your XML file somewhere in this repo.
-3. Create a Spotify playlist (private or public) for this tool to place all of the tracks into. Note the Playlist ID for usage later in the CLI or `.env`.
+1. Head to the Spotify Developer Portal and create a new application. Note the Client ID of the app for usage later in the CLI or `.env`. This will provide you API access to Spotify, though in a limited capacity since it will start as a Sandbox application.
+2. Create a Spotify playlist. This tool will put all of the found tracks into this playlist. Note the Playlist ID for usage later in the CLI or `.env`.
+3. Place your XML file somewhere in this repo for parsing by the script.
 
 ## Usage
 
