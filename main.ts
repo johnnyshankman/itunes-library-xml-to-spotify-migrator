@@ -1,12 +1,30 @@
-import fs from 'fs';
+import * as fs from 'fs';
 import fetch from 'node-fetch';
-import readline from 'readline';
+import * as readline from 'readline';
 import open from 'open';
 import itunes from "itunes-data";
 import 'dotenv/config'
+import * as cliProgress from 'cli-progress';
 
+const pBar = new cliProgress.SingleBar(
+  {},
+  cliProgress.Presets.shades_classic
+);
 
-function askQuestion(query) {
+type Library = {
+  Tracks: {
+    [trackId: string]: Track;
+  };
+}
+
+type Track = {
+  Name?: string;
+  Artist?: string;
+  Album?: string;
+  Genre?: string;
+}
+
+function askQuestion(query: string): Promise<string> {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -18,7 +36,7 @@ function askQuestion(query) {
   }))
 }
 
-let libraryXMLPath = process.env.LIBRARY_XML;
+let libraryXMLPath: string = process.env.LIBRARY_XML || '';
 if (libraryXMLPath) {
   console.log('Using library XML path from .env file');
 } else {
@@ -36,8 +54,8 @@ if (!redirect_uri) {
   redirect_uri = await askQuestion("Enter Spotify Redirect URI:");
 }
 
-var scope = 'playlist-modify-private playlist-modify-public';
-var url = 'https://accounts.spotify.com/authorize';
+const scope = 'playlist-modify-private playlist-modify-public';
+let url = 'https://accounts.spotify.com/authorize';
   url += '?response_type=token';
   url += '&client_id=' + encodeURIComponent(clientId);
   url += '&scope=' + encodeURIComponent(scope);
@@ -60,38 +78,80 @@ if (!playlistId) {
 }
 
 let oneLibrarySemaphore = false;
-let notFoundTracks = [];
-const onLibrary = async (library) => {
+const notFoundTracks: Track[] = [];
+const onLibrary = async (library: Library) => {
   const tracks = library['Tracks'];
 
   if (!oneLibrarySemaphore) {
     oneLibrarySemaphore = true;
+    pBar.start(Object.keys(tracks).length, 0);
+
     for (const trackId in tracks) {
       const track = tracks[trackId];
+      pBar.increment();
       await onTrack(track);
     }
   }
 }
 
-const onTrack = async (track) => {
+const onTrack = async (track: Track) => {
   let uriToAddToPlaylist;
+
+  if (!track) {
+    return;
+  }
+
   const trackName = track['Name'];
   const trackArtist = track['Artist'];
   const trackAlbum = track['Album'];
+
+  if (!trackName || !trackArtist) {
+    notFoundTracks.push(track);
+    return;
+  }
+
   const uriEncodedTrackName = encodeURIComponent(trackName);
   const uriEncodedTrackArtist = encodeURIComponent(trackArtist);
-  const uriEncodedTrackAlbum = encodeURIComponent(trackAlbum);
+  const uriEncodedTrackAlbum = encodeURIComponent(trackAlbum || '');
 
   let endpointString = `https://api.spotify.com/v1/search?q=${uriEncodedTrackName}%20artist:${uriEncodedTrackArtist}%20album:${uriEncodedTrackAlbum}&type=track&limit=1`;
-  let searchResponse = await fetch(
-    endpointString,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  let searchResponse, searchData;
+  try {
+    searchResponse = await fetch(
+      endpointString,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // check if the response was "Too many requests"
+    if (searchResponse.status === 429) {
+      pBar.stop();
+      console.log('');
+      console.log('ERROR: Spotify API rate limit reached, try again later');
+      process.exit(1);
     }
-  );
-  let searchData = await searchResponse.json();
+
+    searchData = (await searchResponse.json()) as {
+      tracks: {
+        items: {
+          uri: string;
+        }[];
+      };
+    };
+  } catch (e) {
+    if (e.message === 'invalid_grant') {
+      pBar.stop();
+      console.log('');
+      console.log('ERROR: Invalid token, please try again');
+      process.exit(1);
+    }
+
+    console.log('Error fetching track', e);
+  }
+
 
   if (searchData.tracks.items.length !== 0) {
     uriToAddToPlaylist = searchData.tracks.items[0].uri;
@@ -107,13 +167,18 @@ const onTrack = async (track) => {
         },
       }
     );
-    searchData = await searchResponse.json();
+
+    searchData = (await searchResponse.json()) as {
+      tracks: {
+        items: {
+          uri: string;
+        }[];
+      };
+    };
 
     if (searchData.tracks.items.length !== 0) {
       uriToAddToPlaylist = searchData.tracks.items[0].uri;
     } else {
-      // @dev we should do a super fuzzy match here
-      // endpointString = `https://api.spotify.com/v1/search?q=${uriEncodedTrackName}%20${uriEncodedTrackArtist}&type=track&limit=1`;
       notFoundTracks.push(track);
       return;
     }
@@ -133,11 +198,12 @@ const onTrack = async (track) => {
       }),
     }
   );
-  const addTrackData = await addTrackResponse.json();
+  const addTrackData = (await addTrackResponse.json()) as {
+    snapshot_id?: string;
+  };
 
-  if (addTrackData.snapshot_id) {
-    console.log(`Successfully migrated ${trackName} by ${trackArtist} from ${trackAlbum} to playlist`);
-  } else {
+  if (!addTrackData.snapshot_id) {
+    notFoundTracks.push(track);
     console.log(`Failure migrating ${trackName} by ${trackArtist} from ${trackAlbum} to playlist`);
   }
 }
@@ -148,9 +214,11 @@ const parser = itunes.parser();
 parser.on("library", onLibrary);
 
 parser.on("end", () => {
+  pBar.stop();
+  console.log('');
   console.log('Migration complete!');
-  fs.writeFileSync('notFoundTracks.json', JSON.stringify(notFoundTracks));
-  console.log(`Could not migrate ${notFoundTracks.length} tracks, that data has been written to notFoundTracks.json`);
+  fs.writeFileSync('notFoundTracks.json', JSON.stringify(notFoundTracks, null, 2));
+  console.log(`${notFoundTracks.length} tracks were not migrated. That data has been written to notFoundTracks.json`);
 });
 
 // @dev: kick the whole process off
