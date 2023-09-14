@@ -6,7 +6,7 @@ This tool takes a standard `iTunes Music Library.xml` file (also called `iTunes 
 
 iTunes library parsing is provided by [itunes-data from shawnbot](https://github.com/shawnbot/itunes-data).
 
-Automatic Spotify search and playlist additions are done using the [Spotify Web API](https://developer.spotify.com/documentation/web-api).
+Automatic Spotify search and playlist additions are done using the [Spotify Web API](https://developer.spotify.com/documentation/web-api), after using OAuth to log you in safely with Spotify.
 
 ## Setup
 
