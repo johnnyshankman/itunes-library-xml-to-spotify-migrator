@@ -2,7 +2,7 @@
 
 ![build](https://github.com/johnnyshankman/itunes-library-xml-to-spotify-migrator/actions/workflows/build.yml/badge.svg)
 
-Takes a standard [`iTunes Music Library.xml`](https://discussions.apple.com/thread/2116343) file (sometimes labeled `iTunes Library.xml`) and migrates each song to a Spotify playlist as best it can.
+Takes a standard [`iTunes Music Library.xml`](https://discussions.apple.com/thread/2116343) file (sometimes labeled `iTunes Library.xml`) and migrates each song to a Spotify playlist as best it can. Also compatible with the output of [swinsian2itlxl](https://github.com/mhite/swinsian2itlxml).
 
 iTunes library parsing is provided by [itunes-data from shawnbot](https://github.com/shawnbot/itunes-data).
 
